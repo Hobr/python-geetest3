@@ -11,17 +11,18 @@ from loguru import logger
 
 class Track:
     @logger.catch
-    def enc(self, track: list, c: list, s: str) -> str:
-        first = self.FirstEnc(track)
-        print(f"first: {first}")
-        return self.SecondEnc(first, c, s)
+    def Enc(self, t: list, c: list, s: str) -> str:
+        track = self.Track(t)
+        aa = self.AA(track, c, s)
+        print(f"first: {track} aa: {aa}")
+        return aa
 
     @logger.catch
-    def FirstEnc(self, track: list) -> str:
+    def Track(self, track: list) -> str:
         return ""
 
     @logger.catch
-    def SecondEnc(self, first: str, c: list, s: str) -> str:
+    def AA(self, first: str, c: list, s: str) -> str:
         return ""
 
 
@@ -293,7 +294,7 @@ class W:
     def SlideCalculate(self) -> str:
         track = self.get_slide_track(int(self.key))
         passtime = track[len(track) - 1][2]
-        aa = Track().enc(track, self.c, self.s)
+        aa = Track().Enc(track, self.c, self.s)
         userresponse = self.UserResponse(int(self.key), self.challenge)
 
         m5 = md5()
@@ -301,7 +302,7 @@ class W:
         rp = m5.hexdigest()
 
         print(
-            f"aa:{aa} challenge:{self.challenge} / {self.key + self.challenge} userresponse:{userresponse}"
+            f"aa:{aa} challenge:{self.challenge} / {self.key + self.challenge} userresponse:{userresponse} track:{track}"
         )
 
         dic = {
