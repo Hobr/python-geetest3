@@ -10,20 +10,16 @@ from loguru import logger
 
 
 class GeetestBase:
-    # 自定义Base64字符集, 使用标准Base64的变体（包含()代替+/）
     CUSTOM_BASE64_ALPHABET = (
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789()"
     )
 
-    # 预定义每个6位段对应的位位置（从高位到低位）
-    # 掩码转换为对应的位位置列表, 用于直接提取所需的6位
-    _PART1_BITS = [22, 21, 19, 18, 17, 16]  # 掩码7274496 (0x6F0000)
-    _PART2_BITS = [23, 20, 15, 13, 12, 10]  # 掩码9483264 (0x90B400)
-    _PART3_BITS = [14, 11, 9, 8, 4, 2]  # 掩码19220 (0x4B14)
-    _PART4_BITS = [7, 6, 5, 3, 1, 0]  # 掩码235 (0xEB)
+    _PART1_BITS = [22, 21, 19, 18, 17, 16]
+    _PART2_BITS = [23, 20, 15, 13, 12, 10]
+    _PART3_BITS = [14, 11, 9, 8, 4, 2]
+    _PART4_BITS = [7, 6, 5, 3, 1, 0]
 
     def _get_base64_char(self, index: int) -> str:
-        """返回自定义Base64字符集中对应索引的字符, 索引无效时返回'.'"""
         return (
             self.CUSTOM_BASE64_ALPHABET[index]
             if 0 <= index < len(self.CUSTOM_BASE64_ALPHABET)
@@ -32,19 +28,16 @@ class GeetestBase:
 
     @staticmethod
     def _extract_bits(value: int, bits: list) -> int:
-        """从给定值中按bits列表顺序提取指定位, 组合成新的6位整数"""
         result = 0
         for bit in bits:
             result = (result << 1) | ((value >> bit) & 1)
         return result
 
-    def _encode_chunk(self, data: bytes) -> dict:
-        """将字节数据分块编码, 返回结果和填充后缀"""
+    def enc(self, data: bytes) -> str:
         encoded = []
         padding = ""
         for i in range(0, len(data), 3):
             chunk = data[i : i + 3]
-            # 处理完整的3字节块
             if len(chunk) == 3:
                 c = (chunk[0] << 16) | (chunk[1] << 8) | chunk[2]
                 encoded.append(
@@ -59,19 +52,17 @@ class GeetestBase:
                 encoded.append(
                     self._get_base64_char(self._extract_bits(c, self._PART4_BITS))
                 )
-            else:  # 处理余数
+            else:
                 remainder = len(chunk)
                 c = chunk[0] << 16
                 if remainder == 2:
                     c |= chunk[1] << 8
-                # 提取前两部分
                 encoded.append(
                     self._get_base64_char(self._extract_bits(c, self._PART1_BITS))
                 )
                 encoded.append(
                     self._get_base64_char(self._extract_bits(c, self._PART2_BITS))
                 )
-                # 根据余数处理第三部分和填充
                 if remainder == 2:
                     encoded.append(
                         self._get_base64_char(self._extract_bits(c, self._PART3_BITS))
@@ -79,12 +70,7 @@ class GeetestBase:
                     padding = "."
                 else:
                     padding = ".."
-        return {"res": "".join(encoded), "end": padding}
-
-    def enc(self, data: bytes) -> str:
-        """加密入口：将字节数据编码为自定义Base64字符串"""
-        result = self._encode_chunk(data)
-        return result["res"] + result["end"]
+        return "".join(encoded) + padding
 
 
 class W:
@@ -131,20 +117,14 @@ class W:
     @logger.catch
     def Encrypt(self, dic: dict) -> str:
         params = json.dumps(dic)
-
-        # u = xxxxx
         u = self.RSA(self.aeskey.decode())
-        # h = [116,13,253,xxxxxxxxxxxxxxxx,70,100]
         h = self.AES(data=params)
-        # aewrhtjyksudlyi;ulkutyjrhtegwfqed eergtyg
-        p = GeetestBase().enc(h)
-        w = p + u
-        return w
+        p = GeetestBase().enc(bytes(h))
+        return p + u
 
     @logger.catch
     def ClickCalculate(self) -> str:
         passtime = random.randint(1300, 2000)
-
         m5 = md5()
         m5.update((self.gt + self.challenge[:-2] + str(passtime)).encode())
         rp = m5.hexdigest()
@@ -152,8 +132,10 @@ class W:
         dic = {
             "lang": "zh-cn",
             "passtime": passtime,
-            "a": self.key,  # 点选位置, e
-            "tt": "",  # tt_c
+            # 点选位置, e
+            "a": self.key,
+            # tt_c
+            "tt": "",
             "ep": {
                 "v": "9.1.8-bfget5",
                 "$_E_": False,
@@ -205,7 +187,6 @@ class W:
     @logger.catch
     def SlideCalculate(self) -> str:
         passtime = random.randint(1300, 2000)
-
         m5 = md5()
         m5.update((self.gt + self.challenge[:-2] + str(passtime)).encode())
         rp = m5.hexdigest()
