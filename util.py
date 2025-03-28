@@ -11,11 +11,13 @@ from loguru import logger
 
 class Track:
     @logger.catch
-    def enc(self, track: list, c: str, s: str) -> str:
-        return self.SecondEnc(self.FirstEnc(track), c, s)
+    def enc(self, track, c, s) -> str:
+        first = self.FirstEnc(track)
+        print(f"first: {first}")
+        return self.SecondEnc(first, c, s)
 
     @logger.catch
-    def FirstEnc(self, mousetrack: list):
+    def FirstEnc(self, mousetrack):
         def n(t):
             e = "()*,-./0123456789:?@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqr"
             n_len = len(e)
@@ -78,7 +80,7 @@ class Track:
         return "".join(r) + "!!" + "".join(i) + "!!" + "".join(o)
 
     @logger.catch
-    def SecondEnc(self, t, e: str, n: str) -> str:
+    def SecondEnc(self, t, e, n) -> str:
         i = 0
         o = t
         s = e[0]
@@ -326,6 +328,8 @@ class W:
         m5 = md5()
         m5.update((self.gt + self.challenge[:-2] + str(passtime)).encode())
         rp = m5.hexdigest()
+        aa = Track().enc(track, self.c, self.s)
+        print(f"aa:{aa}")
 
         dic = {
             "lang": "zh-cn",
@@ -334,7 +338,7 @@ class W:
             "passtime": passtime,
             "imgload": random.randint(100, 200),
             # 轨迹加密
-            "aa": Track().enc(track, self.c, self.s),
+            "aa": aa,
             "ep": {
                 "v": "9.1.8-bfget5",
                 "$_E_": False,
