@@ -1,4 +1,4 @@
-# 极验3代点字逆向
+# 极验3代逆向
 
 ## 感谢
 
@@ -7,7 +7,6 @@
 ## 开发
 
 ```bash
-pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 pip install poetry virtualenv pre-commit
 
 virtualenv venv

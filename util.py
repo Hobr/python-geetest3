@@ -8,20 +8,27 @@ from Crypto.PublicKey import RSA
 from Crypto.Util.Padding import pad
 from loguru import logger
 
+
 class GeetestBase:
     # 自定义Base64字符集，使用标准Base64的变体（包含()代替+/）
-    CUSTOM_BASE64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789()"
+    CUSTOM_BASE64_ALPHABET = (
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789()"
+    )
 
     # 预定义每个6位段对应的位位置（从高位到低位）
     # 掩码转换为对应的位位置列表，用于直接提取所需的6位
     _PART1_BITS = [22, 21, 19, 18, 17, 16]  # 掩码7274496 (0x6F0000)
     _PART2_BITS = [23, 20, 15, 13, 12, 10]  # 掩码9483264 (0x90B400)
-    _PART3_BITS = [14, 11, 9, 8, 4, 2]      # 掩码19220 (0x4B14)
-    _PART4_BITS = [7, 6, 5, 3, 1, 0]         # 掩码235 (0xEB)
+    _PART3_BITS = [14, 11, 9, 8, 4, 2]  # 掩码19220 (0x4B14)
+    _PART4_BITS = [7, 6, 5, 3, 1, 0]  # 掩码235 (0xEB)
 
     def _get_base64_char(self, index: int) -> str:
         """返回自定义Base64字符集中对应索引的字符，索引无效时返回'.'"""
-        return self.CUSTOM_BASE64_ALPHABET[index] if 0 <= index < len(self.CUSTOM_BASE64_ALPHABET) else '.'
+        return (
+            self.CUSTOM_BASE64_ALPHABET[index]
+            if 0 <= index < len(self.CUSTOM_BASE64_ALPHABET)
+            else "."
+        )
 
     @staticmethod
     def _extract_bits(value: int, bits: list) -> int:
@@ -34,36 +41,51 @@ class GeetestBase:
     def _encode_chunk(self, data: bytes) -> dict:
         """将字节数据分块编码，返回结果和填充后缀"""
         encoded = []
-        padding = ''
+        padding = ""
         for i in range(0, len(data), 3):
-            chunk = data[i:i+3]
+            chunk = data[i : i + 3]
             # 处理完整的3字节块
             if len(chunk) == 3:
                 c = (chunk[0] << 16) | (chunk[1] << 8) | chunk[2]
-                encoded.append(self._get_base64_char(self._extract_bits(c, self._PART1_BITS)))
-                encoded.append(self._get_base64_char(self._extract_bits(c, self._PART2_BITS)))
-                encoded.append(self._get_base64_char(self._extract_bits(c, self._PART3_BITS)))
-                encoded.append(self._get_base64_char(self._extract_bits(c, self._PART4_BITS)))
+                encoded.append(
+                    self._get_base64_char(self._extract_bits(c, self._PART1_BITS))
+                )
+                encoded.append(
+                    self._get_base64_char(self._extract_bits(c, self._PART2_BITS))
+                )
+                encoded.append(
+                    self._get_base64_char(self._extract_bits(c, self._PART3_BITS))
+                )
+                encoded.append(
+                    self._get_base64_char(self._extract_bits(c, self._PART4_BITS))
+                )
             else:  # 处理余数
                 remainder = len(chunk)
                 c = chunk[0] << 16
                 if remainder == 2:
                     c |= chunk[1] << 8
                 # 提取前两部分
-                encoded.append(self._get_base64_char(self._extract_bits(c, self._PART1_BITS)))
-                encoded.append(self._get_base64_char(self._extract_bits(c, self._PART2_BITS)))
+                encoded.append(
+                    self._get_base64_char(self._extract_bits(c, self._PART1_BITS))
+                )
+                encoded.append(
+                    self._get_base64_char(self._extract_bits(c, self._PART2_BITS))
+                )
                 # 根据余数处理第三部分和填充
                 if remainder == 2:
-                    encoded.append(self._get_base64_char(self._extract_bits(c, self._PART3_BITS)))
-                    padding = '.'
+                    encoded.append(
+                        self._get_base64_char(self._extract_bits(c, self._PART3_BITS))
+                    )
+                    padding = "."
                 else:
-                    padding = '..'
-        return {'res': ''.join(encoded), 'end': padding}
+                    padding = ".."
+        return {"res": "".join(encoded), "end": padding}
 
     def enc(self, data: bytes) -> str:
         """加密入口：将字节数据编码为自定义Base64字符串"""
         result = self._encode_chunk(data)
-        return result['res'] + result['end']
+        return result["res"] + result["end"]
+
 
 class W:
     @logger.catch
@@ -188,6 +210,7 @@ class W:
         m5.update((self.gt + self.challenge[:-2] + str(passtime)).encode())
         rp = m5.hexdigest()
 
+        """
         track = [
             [-33, -36, 0],
             [0, 0, 0],
@@ -198,6 +221,7 @@ class W:
             [4, -1, 159],
             [4, -1, 239],
         ]
+        """
 
         dic = {
             "lang": "zh-cn",
