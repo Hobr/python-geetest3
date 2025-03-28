@@ -163,7 +163,7 @@ class GeetestBase:
 
 class W:
     @logger.catch
-    def __init__(self, key: str, gt: str, challenge: str, c: str, s: str) -> None:
+    def __init__(self, key: str, gt: str, challenge: str, c: list, s: str) -> None:
         self.key = key
         self.gt = gt
         self.challenge = challenge

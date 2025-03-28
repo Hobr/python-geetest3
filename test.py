@@ -26,8 +26,10 @@ for _i in range(50):
         before_calculate_key = time.time()
         key = click.calculate_key(args)
 
-        w = W(key=key, gt=gt, challenge=challenge, c=str(c), s=s).ClickCalculate()
-        print(f"key: {key}, gt: {gt}, challenge: {challenge}, c: {c}, s: {s}, w: {w}")
+        w = W(key=key, gt=gt, challenge=challenge, c=c, s=s).ClickCalculate()
+        print(
+            f"key: {key}, gt: {gt}, challenge: {challenge}, c: {', '.join(map(str, c))}, s: {s}, w: {w}"
+        )
 
         w_use_time = time.time() - before_calculate_key
         print(f"w生成时间: {w_use_time}")
@@ -84,8 +86,10 @@ for _i in range(50):
         challenge = args[0]
         key = slide.calculate_key(args)
 
-        w = W(key=key, gt=gt, challenge=challenge, c=str(c), s=s).SlideCalculate()
-        print(f"key: {key}, gt: {gt}, challenge: {challenge}, c: {c}, s: {s}, w: {w}")
+        w = W(key=key, gt=gt, challenge=challenge, c=c, s=s).SlideCalculate()
+        print(
+            f"key: {key}, gt: {gt}, challenge: {challenge}, c: {', '.join(map(str, c))}, s: {s}, w: {w}"
+        )
 
         w_use_time = time.time() - before_calculate_key
         print(f"w生成时间: {w_use_time}")
