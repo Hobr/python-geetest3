@@ -189,6 +189,46 @@ class W:
         return slide_track
 
     @logger.catch
+    def UserResponse(self, t: int, e: str) -> str:
+        n = e[-2:]
+        r = []
+
+        for i in range(len(n)):
+            o = ord(n[i])
+            r.append(o - 87 if o > 57 else o - 48)
+
+        n = 36 * r[0] + r[1]
+        a = round(t) + n
+        _ = [[] for _ in range(5)]
+        c = {}
+        u = 0
+        e = e[:-2]
+        f = a
+        d = 4
+        p = ""
+        g = [1, 2, 5, 10, 50]
+
+        for i in range(len(e)):
+            s = e[i]
+            if s not in c:
+                c[s] = 1
+                _[u].append(s)
+                u += 1
+                if u == 5:
+                    u = 0
+
+        while f > 0:
+            if f - g[d] >= 0:
+                h = int(random.random() * len(_[d]))
+                p += _[d][h]
+                f -= g[d]
+            else:
+                _.pop(d)
+                g.pop(d)
+                d -= 1
+        return p
+
+    @logger.catch
     def ClickCalculate(self) -> str:
         passtime = random.randint(1300, 2000)
         m5 = md5()
@@ -253,19 +293,23 @@ class W:
     def SlideCalculate(self) -> str:
         track = self.get_slide_track(int(self.key))
         passtime = track[len(track) - 1][2]
+        aa = Track().enc(track, self.c, self.s)
+        userresponse = self.UserResponse(int(self.key), self.challenge)
+
         m5 = md5()
         m5.update((self.gt + self.challenge[:-2] + str(passtime)).encode())
         rp = m5.hexdigest()
-        aa = Track().enc(track, self.c, self.s)
-        print(f"aa:{aa}")
+
+        print(
+            f"aa:{aa} challenge:{self.challenge} / {self.key + self.challenge} userresponse:{userresponse}"
+        )
 
         dic = {
             "lang": "zh-cn",
-            # 滑动距离 + challenge
-            "userresponse": self.key + self.challenge,
+            "userresponse": userresponse,
             "passtime": passtime,
             "imgload": random.randint(100, 200),
-            # 轨迹加密 len 162
+            # 轨迹加密
             "aa": aa,
             "ep": {
                 "v": "9.1.8-bfget5",
