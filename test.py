@@ -2,6 +2,7 @@ import bili_ticket_gt_python
 import time
 
 from util import W
+import httpx
 
 click = bili_ticket_gt_python.ClickPy()
 slide = bili_ticket_gt_python.SlidePy()
@@ -26,7 +27,7 @@ for _i in range(50):
         key = click.calculate_key(args)
 
         w = W(key=key, gt=gt, challenge=challenge, c=str(c), s=s).ClickCalculate()
-        print(w)
+        print(f"key: {key}, gt: {gt}, challenge: {challenge}, c: {c}, s: {s}, w: {w}")
 
         w_use_time = time.time() - before_calculate_key
         print(f"w生成时间: {w_use_time}")
@@ -38,10 +39,39 @@ for _i in range(50):
 
         time.sleep(3)
 
-        # Slide
+        # Slide https://bili2233.cn/TJJxeHH
         print("----------滑块----------")
+        data = {
+            "customerId": "",
+            "deviceId": "ad86110dee0d4eea60cfc9c2e2f7d7ae",
+            "voucher": "alsfn234nlasf",
+            "clientType": "h5",
+            "csrf": "3fe94ee3c56c03582988ce62d3c028bd",
+        }
+        header = {
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0",
+            "Accept": "*/*",
+            "Accept-Language": "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
+            "Content-Type": "application/json",
+            "Referer": "https://mall.bilibili.com/",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-site",
+        }
+        res = httpx.post(
+            url="https://show.bilibili.com/open/verify/geetest/get?oaccesskey=",
+            json=data,
+            headers=header,
+        )
 
-        (gt, challenge) = slide.register_test("https://bili2233.cn/TJJxeHH")
+        if res.status_code != httpx.codes.OK:
+            res.raise_for_status()
+
+        res = res.json().get("data")
+
+        gt = res["captcha_id"]
+        challenge = res["challenge"]
+
         (_, _) = slide.get_c_s(gt, challenge)
         _type = slide.get_type(gt, challenge)
 
@@ -55,7 +85,7 @@ for _i in range(50):
         key = slide.calculate_key(args)
 
         w = W(key=key, gt=gt, challenge=challenge, c=str(c), s=s).SlideCalculate()
-        print(w)
+        print(f"key: {key}, gt: {gt}, challenge: {challenge}, c: {c}, s: {s}, w: {w}")
 
         w_use_time = time.time() - before_calculate_key
         print(f"w生成时间: {w_use_time}")
