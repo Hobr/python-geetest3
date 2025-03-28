@@ -45,10 +45,10 @@ for _i in range(50):
         print("----------滑块----------")
         data = {
             "customerId": "",
-            "deviceId": "ad86110dee0d4eea60cfc9c2e2f7d7ae",
-            "voucher": "alsfn234nlasf",
+            "deviceId": "",
+            "voucher": "",
             "clientType": "h5",
-            "csrf": "3fe94ee3c56c03582988ce62d3c028bd",
+            "csrf": "",
         }
         header = {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0",
