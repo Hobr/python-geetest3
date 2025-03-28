@@ -8,21 +8,18 @@ function Track(track) {
         n <= o && (o = n - 1);
         o && (r = e.charAt(o));
         var s = "";
-        return t < 0 && (s += "!"),
-            r && (s += "$"),
-            s + r + e.charAt(i %= n);
+        return t < 0 && (s += "!"), r && (s += "$"), s + r + e.charAt(i %= n);
     }
     var t = function(t) {
         for (var e, n, r, i = [], o = 0, s = 0, a = t.length - 1; s < a; s++) {
             e = Math.round(t[s + 1][0] - t[s][0]);
             n = Math.round(t[s + 1][1] - t[s][1]);
             r = Math.round(t[s + 1][2] - t[s][2]);
-            0 == e && 0 == n && 0 == r || (0 == e && 0 == n ? o += r : (i.push([e, n, r + o]),
-                o = 0));
+            0 == e && 0 == n && 0 == r || (0 == e && 0 == n ? o += r : (i.push([e, n, r + o]), o = 0));
         }
-        return 0 !== o && i.push([e, n, o]),
-            i;
+        return 0 !== o && i.push([e, n, o]), i;
     }(track);
+
     var r = [];
     var i = [];
     var o = [];
@@ -30,22 +27,22 @@ function Track(track) {
     return new ct(t)["$_CAE"](function(t) {
             var e = function(t) {
                 for (var e = [
-                        [1, 0],
-                        [2, 0],
-                        [1, -1],
-                        [1, 1],
-                        [0, 1],
-                        [0, -1],
-                        [3, 0],
-                        [2, -1],
-                        [2, 1]
-                    ], n = 0, r = e.length; n < r; n++)
+                            [1, 0],
+                            [2, 0],
+                            [1, -1],
+                            [1, 1],
+                            [0, 1],
+                            [0, -1],
+                            [3, 0],
+                            [2, -1],
+                            [2, 1]
+                        ],
+                        n = 0, r = e.length; n < r; n++)
                     if (t[0] == e[n][0] && t[1] == e[n][1])
                         return "stuvwxyz~" [n];
                 return 0;
             }(t);
-            e ? i.push(e) : (r.push(n(t[0])),
-                i.push(n(t[1])));
+            e ? i.push(e) : (r.push(n(t[0])), i.push(n(t[1])));
             o.push(n(t[2]));
         }),
         r.join("") + "!!" + i.join("") + "!!" + o.join("");
@@ -69,7 +66,8 @@ ct.prototype = {
 function AA(t, e, n) {
     if (!e || !n)
         return t;
-    var r, i = 0,
+    var r,
+        i = 0,
         o = t,
         s = e[0],
         a = e[2],
