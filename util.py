@@ -6,24 +6,6 @@ from hashlib import md5
 from Crypto.Cipher import AES, PKCS1_v1_5
 from Crypto.PublicKey import RSA
 from Crypto.Util.Padding import pad
-from loguru import logger
-
-
-class Track:
-    @logger.catch
-    def Enc(self, t: list, c: list, s: str) -> str:
-        track = self.Track(t)
-        aa = self.AA(track, c, s)
-        print(f"first: {track} aa: {aa}")
-        return aa
-
-    @logger.catch
-    def Track(self, track: list) -> str:
-        return ""
-
-    @logger.catch
-    def AA(self, first: str, c: list, s: str) -> str:
-        return ""
 
 
 class GeetestBase:
@@ -91,7 +73,6 @@ class GeetestBase:
 
 
 class W:
-    @logger.catch
     def __init__(self, key: str, gt: str, challenge: str, c: list, s: str) -> None:
         self.key = key
         self.gt = gt
@@ -100,7 +81,6 @@ class W:
         self.s = s
         self.aeskey = self.Key()
 
-    @logger.catch
     def Key(self) -> bytes:
         var = []
         for _ in range(4):
@@ -110,7 +90,6 @@ class W:
         dist = ("".join(var)).encode()
         return dist
 
-    @logger.catch
     def RSA(self, data: str) -> str:
         k = int(
             "00C1E3934D1614465B33053E7F48EE4EC87B14B95EF88947713D25EECBFF7E74C7977D02DC1D9451F79DD5D1C10C29ACB6A9B4D6FB7D0A0279B6719E1772565F09AF627715919221AEF91899CAE08C0D686D748B20A3603BE2318CA6BC2B59706592A9219D0BF05C9F65023A21D2330807252AE0066D59CEEFA5F2748EA80BAB81",
@@ -123,7 +102,6 @@ class W:
         encryptedHex = hexlify(encryptedData)
         return encryptedHex.decode()
 
-    @logger.catch
     def AES(self, data: str) -> list:
         iv = b"0000000000000000"
         cipher = AES.new(self.aeskey, AES.MODE_CBC, iv)
@@ -131,7 +109,6 @@ class W:
         encrypted = cipher.encrypt(padPkcs7)
         return [encrypted[i] for i in range(len(encrypted))]
 
-    @logger.catch
     def Encrypt(self, dic: dict) -> str:
         params = json.dumps(dic)
         u = self.RSA(self.aeskey.decode())
@@ -139,7 +116,6 @@ class W:
         p = GeetestBase().enc(bytes(h))
         return p + u
 
-    @logger.catch
     def __ease_out_expo(self, sep: float) -> float:
         """
         缓动函数 easeOutExpo
@@ -150,7 +126,6 @@ class W:
         else:
             return 1 - pow(2, -10 * sep)
 
-    @logger.catch
     def get_slide_track(self, distance: int) -> list:
         """
         根据滑动距离生成滑动轨迹
@@ -189,7 +164,6 @@ class W:
         slide_track.append(slide_track[-1])
         return slide_track
 
-    @logger.catch
     def UserResponse(self, t: int, e: str) -> str:
         n = e[-2:]
         r = []
@@ -229,7 +203,95 @@ class W:
                 d -= 1
         return p
 
-    @logger.catch
+    @staticmethod
+    def TrackEncrypt(track):
+        def ProcessTrack(track):
+            result = []
+            o = 0
+            e = 0
+            n = 0
+            for s in range(len(track) - 1):
+                e = round(track[s + 1][0] - track[s][0])
+                n = round(track[s + 1][1] - track[s][1])
+                r = round(track[s + 1][2] - track[s][2])
+                if e == 0 and n == 0 and r == 0:
+                    continue
+                if e == 0 and n == 0:
+                    o += r
+                else:
+                    result.append([e, n, r + o])
+                    o = 0
+            if o != 0:
+                result.append([e, n, o])
+            return result
+
+        def EncodeValue(t):
+            e = "()*,-./0123456789:?@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqr"
+            n = len(e)
+            r = ""
+            i = abs(t)
+            o = i // n
+            if o >= n:
+                o = n - 1
+            if o:
+                r = e[o]
+            s = ""
+            if t < 0:
+                s += "!"
+            if r:
+                s += "$"
+            return s + r + e[i % n]
+
+        def EncodePair(t):
+            pairs = [
+                [1, 0],
+                [2, 0],
+                [1, -1],
+                [1, 1],
+                [0, 1],
+                [0, -1],
+                [3, 0],
+                [2, -1],
+                [2, 1],
+            ]
+            chars = "stuvwxyz~"
+            for n, pair in enumerate(pairs):
+                if t[:2] == pair:
+                    return chars[n]
+            return None
+
+        def ProcessElement(t):
+            e = EncodePair(t)
+            if e:
+                i.append(e)
+            else:
+                r.append(EncodeValue(t[0]))
+                i.append(EncodeValue(t[1]))
+            o.append(EncodeValue(t[2]))
+
+        t = ProcessTrack(track)
+        r, i, o = [], [], []
+
+        for item in t:
+            ProcessElement(item)
+
+        return "".join(r) + "!!" + "".join(i) + "!!" + "".join(o)
+
+    @staticmethod
+    def FinalEncrypt(t, e, n):
+        if not e or not n:
+            return t
+        i, o = 0, t
+        s, a, _ = e[0], e[2], e[4]
+        while i < len(n):
+            r = n[i : i + 2]
+            i += 2
+            c = int(r, 16)
+            u = chr(c)
+            ll = (s * c * c + a * c + _) % len(t)
+            o = o[:ll] + u + o[ll:]
+        return o
+
     def ClickCalculate(self) -> str:
         passtime = random.randint(1300, 2000)
         m5 = md5()
@@ -290,20 +352,15 @@ class W:
         }
         return self.Encrypt(dic)
 
-    @logger.catch
     def SlideCalculate(self) -> str:
         track = self.get_slide_track(int(self.key))
         passtime = track[len(track) - 1][2]
-        aa = Track().Enc(track, self.c, self.s)
+        aa = self.FinalEncrypt(self.TrackEncrypt(track), self.c, self.s)
         userresponse = self.UserResponse(int(self.key), self.challenge)
 
         m5 = md5()
         m5.update((self.gt + self.challenge[:-2] + str(passtime)).encode())
         rp = m5.hexdigest()
-
-        print(
-            f"aa:{aa} challenge:{self.challenge} / {self.key + self.challenge} userresponse:{userresponse} track:{track}"
-        )
 
         dic = {
             "lang": "zh-cn",
