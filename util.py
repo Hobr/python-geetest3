@@ -173,9 +173,8 @@ class W:
         dic = {
             "lang": "zh-cn",
             "passtime": passtime,
-            # 点选位置, e
+            # 点选位置
             "a": self.key,
-            # tt_c
             "tt": "",
             "ep": {
                 "v": "9.1.8-bfget5",
@@ -226,64 +225,64 @@ class W:
         return self.Encrypt(dic)
 
     def SlideCalculate(self) -> str:
+        # 滑动时间: track[track.length - 1][2]
         passtime = random.randint(1300, 2000)
         m5 = md5()
         m5.update((self.gt + self.challenge[:-2] + str(passtime)).encode())
         rp = m5.hexdigest()
 
-        """
-        track = [
-            [-33, -36, 0],
-            [0, 0, 0],
-            [1, 0, 6],
-            [2, 0, 30],
-            [2, -1, 38],
-            [4, -1, 134],
-            [4, -1, 159],
-            [4, -1, 239],
-        ]
-        """
-
         dic = {
             "lang": "zh-cn",
-            # userresponse(self.key +  challenge)
-            "userresponse": "",
-            # n=消耗时间
+            # 滑动距离 + challenge
+            "userresponse": self.key + self.challenge,
             "passtime": passtime,
-            # 加载数据
-            "imgload": random.randint(70, 150),
-            # aa(track, self.c, self.s),
+            "imgload": random.randint(100, 200),
+            # 轨迹加密
             "aa": "",
             "ep": {
-                "v": "7.9.2",
-                "$_BIE": False,
+                "v": "9.1.8-bfget5",
+                "$_E_": False,
                 "me": True,
+                "ven": "Google Inc. (Intel)",
+                "ren": "ANGLE (Intel, Intel(R) HD Graphics 520 Direct3D11 vs_5_0 ps_5_0, D3D11)",
+                "fp": ["move", 483, 149, 1702019849214, "pointermove"],
+                "lp": ["up", 657, 100, 1702019852230, "pointerup"],
+                "em": {
+                    "ph": 0,
+                    "cp": 0,
+                    "ek": "11",
+                    "wd": 1,
+                    "nt": 0,
+                    "si": 0,
+                    "sc": 0,
+                },
                 "tm": {
-                    "a": 1720326755214,
-                    "b": 0,
-                    "c": 0,
+                    "a": 1702019845759,
+                    "b": 1702019845951,
+                    "c": 1702019845951,
                     "d": 0,
                     "e": 0,
-                    "f": 1720326755214,
-                    "g": 1720326755214,
-                    "h": 1720326755214,
-                    "i": 1720326755309,
-                    "j": 1720326755685,
-                    "k": 1720326755310,
-                    "l": 1720326755685,
-                    "m": 1720326756051,
-                    "n": 1720326756051,
-                    "o": 1720326756080,
-                    "p": 1720326756689,
-                    "q": 1720326756689,
-                    "r": 1720326756694,
-                    "s": 1720326756694,
-                    "t": 1720326756694,
-                    "u": 1720326756695,
+                    "f": 1702019845763,
+                    "g": 1702019845785,
+                    "h": 1702019845785,
+                    "i": 1702019845785,
+                    "j": 1702019845845,
+                    "k": 1702019845812,
+                    "l": 1702019845845,
+                    "m": 1702019845942,
+                    "n": 1702019845946,
+                    "o": 1702019845954,
+                    "p": 1702019846282,
+                    "q": 1702019846282,
+                    "r": 1702019846287,
+                    "s": 1702019846288,
+                    "t": 1702019846288,
+                    "u": 1702019846288,
                 },
-                "td": -1,
+                "dnf": "dnf",
+                "by": 0,
             },
-            "h9s9": "1816378497",
             "rp": rp,
         }
+
         return self.Encrypt(dic)
