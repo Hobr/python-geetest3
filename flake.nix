@@ -30,6 +30,8 @@
                 portaudio
                 stdenv.cc.cc.lib
                 pre-commit
+                nodejs
+                jsbeautifier
               ]
               ++ (with pkgs.python313Packages; [
                 pip
