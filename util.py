@@ -82,6 +82,7 @@ class W:
         self.aeskey = self.Key()
 
     def Key(self) -> bytes:
+        """生成AES加密密钥"""
         var = []
         for _ in range(4):
             randomValue = int(65536 * (1 + random.random()))
@@ -91,6 +92,7 @@ class W:
         return dist
 
     def RSA(self, data: str) -> str:
+        """RSA加密 w加密第一层"""
         k = int(
             "00C1E3934D1614465B33053E7F48EE4EC87B14B95EF88947713D25EECBFF7E74C7977D02DC1D9451F79DD5D1C10C29ACB6A9B4D6FB7D0A0279B6719E1772565F09AF627715919221AEF91899CAE08C0D686D748B20A3603BE2318CA6BC2B59706592A9219D0BF05C9F65023A21D2330807252AE0066D59CEEFA5F2748EA80BAB81",
             16,
@@ -103,6 +105,7 @@ class W:
         return encryptedHex.decode()
 
     def AES(self, data: str) -> list:
+        """AES加密 w加密第二层"""
         iv = b"0000000000000000"
         cipher = AES.new(self.aeskey, AES.MODE_CBC, iv)
         padPkcs7 = pad(data.encode(), AES.block_size, style="pkcs7")
@@ -110,24 +113,16 @@ class W:
         return [encrypted[i] for i in range(len(encrypted))]
 
     def Encrypt(self, dic: dict) -> str:
+        """w加密"""
         params = json.dumps(dic)
         u = self.RSA(self.aeskey.decode())
         h = self.AES(data=params)
         p = GeetestBase().enc(bytes(h))
         return p + u
 
-    def __ease_out_expo(self, sep: float) -> float:
-        """
-        缓动函数 easeOutExpo
-        参考: https://easings.net/zh-cn#easeOutExpo
-        """
-        if sep == 1:
-            return 1
-        else:
-            return 1 - pow(2, -10 * sep)
-
     def get_slide_track(self, distance: int) -> list:
         """
+        Slide滑动轨迹计算
         根据滑动距离生成滑动轨迹
         :param distance: 需要滑动的距离
         :return: 滑动轨迹<type 'list'>: [[x,y,t], ...]
@@ -135,6 +130,16 @@ class W:
             y: 已滑动的纵向距离, 除起点外, 均为0
             t: 滑动过程消耗的时间, 单位: 毫秒
         """
+
+        def __ease_out_expo(sep: float) -> float:
+            """
+            缓动函数 easeOutExpo
+            参考: https://easings.net/zh-cn#easeOutExpo
+            """
+            if sep == 1:
+                return 1
+            else:
+                return 1 - pow(2, -10 * sep)
 
         if not isinstance(distance, int) or distance < 0:
             raise ValueError(
@@ -154,7 +159,7 @@ class W:
         _y = 0
         for i in range(count):
             # 已滑动的横向距离
-            x = round(self.__ease_out_expo(i / count) * distance)
+            x = round(__ease_out_expo(i / count) * distance)
             # 滑动过程消耗的时间
             t += random.randint(10, 20)
             if x == _x:
@@ -165,6 +170,7 @@ class W:
         return slide_track
 
     def UserResponse(self, t: int, e: str) -> str:
+        """Slide key+challenge加密"""
         n = e[-2:]
         r = []
 
@@ -205,6 +211,8 @@ class W:
 
     @staticmethod
     def TrackEncrypt(track):
+        """Slide 轨迹加密第一层"""
+
         def ProcessTrack(track):
             result = []
             o = 0
@@ -279,6 +287,7 @@ class W:
 
     @staticmethod
     def FinalEncrypt(t, e, n):
+        """Slide 轨迹加密第二层"""
         if not e or not n:
             return t
         i, o = 0, t
@@ -293,6 +302,7 @@ class W:
         return o
 
     def ClickCalculate(self) -> str:
+        """Click w计算"""
         passtime = random.randint(1300, 2000)
         m5 = md5()
         m5.update((self.gt + self.challenge[:-2] + str(passtime)).encode())
@@ -353,6 +363,7 @@ class W:
         return self.Encrypt(dic)
 
     def SlideCalculate(self) -> str:
+        """Slide w计算"""
         track = self.get_slide_track(int(self.key))
         passtime = track[len(track) - 1][2]
         aa = self.FinalEncrypt(self.TrackEncrypt(track), self.c, self.s)
