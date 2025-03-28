@@ -321,8 +321,8 @@ class W:
 
     @logger.catch
     def SlideCalculate(self) -> str:
-        # 滑动时间: track[track.length - 1][2]
-        passtime = random.randint(1300, 2000)
+        track = self.get_slide_track(int(self.key))
+        passtime = track[len(track) - 1][2]
         m5 = md5()
         m5.update((self.gt + self.challenge[:-2] + str(passtime)).encode())
         rp = m5.hexdigest()
@@ -334,7 +334,7 @@ class W:
             "passtime": passtime,
             "imgload": random.randint(100, 200),
             # 轨迹加密
-            "aa": "",
+            "aa": Track().enc(track, self.c, self.s),
             "ep": {
                 "v": "9.1.8-bfget5",
                 "$_E_": False,
