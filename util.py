@@ -160,6 +160,7 @@ class GeetestBase:
 
 
 class W:
+    @logger.catch
     def __init__(self, key: str, gt: str, challenge: str, c: str, s: str) -> None:
         self.key = key
         self.gt = gt
@@ -168,6 +169,7 @@ class W:
         self.s = s
         self.aeskey = self.Key()
 
+    @logger.catch
     def Key(self) -> bytes:
         var = []
         for _ in range(4):
@@ -177,6 +179,7 @@ class W:
         dist = ("".join(var)).encode()
         return dist
 
+    @logger.catch
     def RSA(self, data: str) -> str:
         k = int(
             "00C1E3934D1614465B33053E7F48EE4EC87B14B95EF88947713D25EECBFF7E74C7977D02DC1D9451F79DD5D1C10C29ACB6A9B4D6FB7D0A0279B6719E1772565F09AF627715919221AEF91899CAE08C0D686D748B20A3603BE2318CA6BC2B59706592A9219D0BF05C9F65023A21D2330807252AE0066D59CEEFA5F2748EA80BAB81",
@@ -189,6 +192,7 @@ class W:
         encryptedHex = hexlify(encryptedData)
         return encryptedHex.decode()
 
+    @logger.catch
     def AES(self, data: str) -> list:
         iv = b"0000000000000000"
         cipher = AES.new(self.aeskey, AES.MODE_CBC, iv)
@@ -196,6 +200,7 @@ class W:
         encrypted = cipher.encrypt(padPkcs7)
         return [encrypted[i] for i in range(len(encrypted))]
 
+    @logger.catch
     def Encrypt(self, dic: dict) -> str:
         params = json.dumps(dic)
         u = self.RSA(self.aeskey.decode())
@@ -203,7 +208,8 @@ class W:
         p = GeetestBase().enc(bytes(h))
         return p + u
 
-    def __ease_out_expo(self, sep):
+    @logger.catch
+    def __ease_out_expo(self, sep: float) -> float:
         """
         缓动函数 easeOutExpo
         参考: https://easings.net/zh-cn#easeOutExpo
@@ -213,7 +219,8 @@ class W:
         else:
             return 1 - pow(2, -10 * sep)
 
-    def get_slide_track(self, distance):
+    @logger.catch
+    def get_slide_track(self, distance: int) -> list:
         """
         根据滑动距离生成滑动轨迹
         :param distance: 需要滑动的距离
@@ -251,6 +258,7 @@ class W:
         slide_track.append(slide_track[-1])
         return slide_track
 
+    @logger.catch
     def ClickCalculate(self) -> str:
         passtime = random.randint(1300, 2000)
         m5 = md5()
@@ -311,6 +319,7 @@ class W:
         }
         return self.Encrypt(dic)
 
+    @logger.catch
     def SlideCalculate(self) -> str:
         # 滑动时间: track[track.length - 1][2]
         passtime = random.randint(1300, 2000)
