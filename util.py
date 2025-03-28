@@ -10,20 +10,20 @@ from loguru import logger
 
 
 class GeetestBase:
-    # 自定义Base64字符集，使用标准Base64的变体（包含()代替+/）
+    # 自定义Base64字符集, 使用标准Base64的变体（包含()代替+/）
     CUSTOM_BASE64_ALPHABET = (
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789()"
     )
 
     # 预定义每个6位段对应的位位置（从高位到低位）
-    # 掩码转换为对应的位位置列表，用于直接提取所需的6位
+    # 掩码转换为对应的位位置列表, 用于直接提取所需的6位
     _PART1_BITS = [22, 21, 19, 18, 17, 16]  # 掩码7274496 (0x6F0000)
     _PART2_BITS = [23, 20, 15, 13, 12, 10]  # 掩码9483264 (0x90B400)
     _PART3_BITS = [14, 11, 9, 8, 4, 2]  # 掩码19220 (0x4B14)
     _PART4_BITS = [7, 6, 5, 3, 1, 0]  # 掩码235 (0xEB)
 
     def _get_base64_char(self, index: int) -> str:
-        """返回自定义Base64字符集中对应索引的字符，索引无效时返回'.'"""
+        """返回自定义Base64字符集中对应索引的字符, 索引无效时返回'.'"""
         return (
             self.CUSTOM_BASE64_ALPHABET[index]
             if 0 <= index < len(self.CUSTOM_BASE64_ALPHABET)
@@ -32,14 +32,14 @@ class GeetestBase:
 
     @staticmethod
     def _extract_bits(value: int, bits: list) -> int:
-        """从给定值中按bits列表顺序提取指定位，组合成新的6位整数"""
+        """从给定值中按bits列表顺序提取指定位, 组合成新的6位整数"""
         result = 0
         for bit in bits:
             result = (result << 1) | ((value >> bit) & 1)
         return result
 
     def _encode_chunk(self, data: bytes) -> dict:
-        """将字节数据分块编码，返回结果和填充后缀"""
+        """将字节数据分块编码, 返回结果和填充后缀"""
         encoded = []
         padding = ""
         for i in range(0, len(data), 3):
