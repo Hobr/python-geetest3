@@ -6,6 +6,93 @@ from hashlib import md5
 from Crypto.Cipher import AES, PKCS1_v1_5
 from Crypto.PublicKey import RSA
 from Crypto.Util.Padding import pad
+from loguru import logger
+
+
+class Track:
+    @logger.catch
+    def enc(self, track: list, c: str, s: str) -> str:
+        return self.SecondEnc(self.FirstEnc(track), c, s)
+
+    @logger.catch
+    def FirstEnc(self, mousetrack: list):
+        def n(t):
+            e = "()*,-./0123456789:?@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqr"
+            n_len = len(e)
+            r = ""
+            i = abs(t)
+            o = int(i / n_len)
+            if n_len <= o:
+                o = n_len - 1
+            if o:
+                r = e[o]
+            s = ""
+            if t < 0:
+                s += "!"
+            if r:
+                s += "$"
+            s += e[i % n_len]
+            return s
+
+        def find_special_point(t):
+            special_points = [
+                [1, 0],
+                [2, 0],
+                [1, -1],
+                [1, 1],
+                [0, 1],
+                [0, -1],
+                [3, 0],
+                [2, -1],
+                [2, 1],
+            ]
+            for sp in special_points:
+                if t[0] == sp[0] and t[1] == sp[1]:
+                    return "stuvwxyz~"[special_points.index(sp)]
+            return 0
+
+        def track_transform(t):
+            i = []
+            for s in range(len(t) - 1):
+                e = round(t[s + 1][0] - t[s][0])
+                n = round(t[s + 1][1] - t[s][1])
+                # r = round(t[s + 1][2] - t[s][2])
+                o = 0
+                if e != 0:
+                    o = e
+                i.append([e, n, o])
+            return i
+
+        t = track_transform(mousetrack)
+        r = []
+        i = []
+        o = []
+        for point in t:
+            e = find_special_point(point)
+            if e:
+                i.append(e)
+            else:
+                r.append(n(point[0]))
+                i.append(n(point[1]))
+            o.append(n(point[2]))
+        return "".join(r) + "!!" + "".join(i) + "!!" + "".join(o)
+
+    @logger.catch
+    def SecondEnc(self, t, e: str, n: str) -> str:
+        i = 0
+        o = t
+        s = e[0]
+        a = e[2]
+        _ = e[4]
+
+        while i < len(n):
+            r = n[i : i + 2]
+            i += 2
+            c = int(r, 16)
+            u = chr(c)
+            ll = (s * c * c + a * c + _) % len(t)
+            o = o[:ll] + u + o[ll:]
+        return o
 
 
 class GeetestBase:
