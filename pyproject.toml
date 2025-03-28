@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "python-geetest3-click"
+name = "python-geetest3"
 version = "1.0.0"
-description = "极验3代点字"
+description = "极验3代"
 authors = ["Hobr"]
 license = "GPL3.0"
 readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.13"
+python = ">=3.10,<3.14"
 loguru = "^0.7.2"
 bili-ticket-gt-python = "^0.2.2"
 pycryptodome = "^3.20.0"
